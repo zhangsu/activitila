@@ -4,8 +4,8 @@ auth = require './auth'
 app = express()
 
 app.get '/', (request, response) ->
-  auth.loginToFacebook()
+  auth.facebook.authenticate()
   response.send 'It works!'
 
-app.listen 8124
+app.listen 8125
 
