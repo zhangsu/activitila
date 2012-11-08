@@ -21,7 +21,7 @@ facebookOAuthUrl = 'https://www.facebook.com/dialog/oauth?' +
   # the headless HTTP client.
   querystring.stringify(
     client_id:    credentials.facebook.clientId
-    redirect_uri: 'https://arcane-depths-1190.herokuapp.com'
+    redirect_uri: 'http://0.0.0.0:8125/dummy'
     scope:        'read_stream'
   )
 
@@ -34,12 +34,11 @@ dictFromHiddenFormInput = (form) ->
 
   dict
 
-# Try to login if the form is present (otherwise we have the session cookie).
-tryLogin = ($) ->
-  loginForm = $('#login_form')
+getCodeFromSession = (response) ->
+  querystring.parse(response.request.uri.query)['code']
 
-  return unless loginForm.length > 0
-
+# Automatically submits the login form.
+login = (loginForm) ->
   action = loginForm.attr('action')
   loginParams = dictFromHiddenFormInput(loginForm)
   loginParams[fieldKey.email] = credentials.facebook.email
@@ -51,8 +50,7 @@ tryLogin = ($) ->
     form: loginParams
     followAllRedirects: true
   }, (error, response, body) ->
-    console.log body
-
+    console.log getCodeFromSession(response)
 
 # Login to Facebook and get the `code` parameter.
 exports.authenticate = ->
@@ -61,4 +59,12 @@ exports.authenticate = ->
     headers: defaultHeaders
   }, (error, response, body) ->
     $ = cheerio.load(body)
-    tryLogin($)
+    loginForm = $('#login_form')
+    if loginForm.length > 0
+      # Do login only if the login form is present.
+      login(loginForm)
+    else
+      # Facebook session cookie is present so login form is skipped. Another
+      # request with the `code` parameter is already being sent to
+      # `redirect_uri`.
+      console.log getCodeFromSession(response)
