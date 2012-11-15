@@ -4,7 +4,7 @@ querystring = require 'querystring'
 
 credentials = require './credentials'
 
-fieldKey =
+loginFormKey =
   email: 'email'
   pass: 'pass'
 
@@ -41,8 +41,8 @@ getCodeFromSession = (response) ->
 login = (loginForm) ->
   action = loginForm.attr('action')
   loginParams = dictFromHiddenFormInput(loginForm)
-  loginParams[fieldKey.email] = credentials.facebook.email
-  loginParams[fieldKey.pass] = credentials.facebook.pass
+  loginParams[loginFormKey.email] = credentials.facebook.email
+  loginParams[loginFormKey.pass] = credentials.facebook.pass
 
   request.post {
     url: action
