@@ -4,6 +4,10 @@ querystring = require 'querystring'
 
 credentials = require './credentials'
 
+
+# The magical `code` retrieved after Facebook OAuth is done.
+code = undefined
+
 # The key names of the login POST form.
 loginFormKey =
   email: 'email'
@@ -35,7 +39,9 @@ dictFromHiddenFormInput = (form) ->
 
   dict
 
-getCodeFromSession = (response) ->
+# Get the value of the `code` param in the returning GET request from the
+# Facebook OAuth dialog page.
+getCodeFromResponse = (response) ->
   querystring.parse(response.request.uri.query)['code']
 
 # Automatically submits the login form.
@@ -51,10 +57,9 @@ login = (loginForm) ->
     form: loginParams
     followAllRedirects: true
   }, (error, response, body) ->
-    console.log getCodeFromSession(response)
+    code = getCodeFromResponse(response)
 
-# Login to Facebook and get the `code` parameter.
-exports.authenticate = ->
+refreshCode = ->
   request {
     url: oauthUrl
     headers: defaultHeaders
@@ -68,4 +73,8 @@ exports.authenticate = ->
       # Facebook session cookie is present so login form is skipped. Another
       # request with the `code` parameter is already being sent to
       # `redirect_uri`.
-      console.log getCodeFromSession(response)
+      code = getCodeFromResponse(response)
+
+# Login to Facebook and get the `code` parameter.
+exports.authenticate = ->
+  refreshCode() unless code
