@@ -59,6 +59,7 @@ login = (loginForm) ->
   }, (error, response, body) ->
     code = getCodeFromResponse(response)
 
+# Get a new `code` from Facebook.
 refreshCode = ->
   request {
     url: oauthUrl
