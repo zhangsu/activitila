@@ -4,6 +4,7 @@ querystring = require 'querystring'
 
 credentials = require './credentials'
 
+# The key names of the login POST form.
 loginFormKey =
   email: 'email'
   pass: 'pass'
@@ -13,7 +14,7 @@ defaultHeaders =
   'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.4 ' +
                 '(KHTML, like Gecko) Chrome/22.0.1229.94 Safari/537.4'
 
-facebookOAuthUrl = 'https://www.facebook.com/dialog/oauth?' +
+oauthUrl = 'https://www.facebook.com/dialog/oauth?' +
   # The `state` field is not needed here because the app is not using any the
   # routes to check if Facebook gives us a `code` (i.e., not relying on
   # real browser requests with a `code` parameter), thus the app does not have
@@ -55,7 +56,7 @@ login = (loginForm) ->
 # Login to Facebook and get the `code` parameter.
 exports.authenticate = ->
   request {
-    url: facebookOAuthUrl
+    url: oauthUrl
     headers: defaultHeaders
   }, (error, response, body) ->
     $ = cheerio.load(body)
