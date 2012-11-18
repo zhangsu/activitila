@@ -4,8 +4,12 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "cheerio": "x",
+    "coffee-script": "1.x",
     "express": "3.x",
     "request": "x"
+  },
+  "engines": {
+    "node": "0.x",
+    "npm": "1.x"
   }
 }
