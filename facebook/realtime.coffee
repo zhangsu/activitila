@@ -7,7 +7,7 @@ exports.verify = (request, response) ->
   else if request.query['hub.verify_token'] != credentials.realtime.verifyToken
     response.send(403)
   else
-    response.send('Subscription verified!')
+    response.send(request.query['hub.challenge'])
 
 # Handles real-time activity updates on Facebook.
 exports.update = (request, response) ->
