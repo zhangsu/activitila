@@ -3,6 +3,7 @@ express = require 'express'
 facebook = require './facebook'
 
 app = express()
+app.use(express.bodyParser())
 
 app.get '/', (request, response) ->
   response.send('It works!')
