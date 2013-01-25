@@ -1,6 +1,9 @@
+redis = require 'redis'
 request = require 'request'
 querystring = require 'querystring'
 credentials = require './credentials'
+
+db = redis.createClient()
 
 url = (fields) ->
   "https://graph.facebook.com/#{credentials.basic.uid}?" +
@@ -11,10 +14,19 @@ url = (fields) ->
 
 pullFeed = ->
   console.log 'Updating feed cache...'
+  last_updated_time = null
+
+  db.get "facebook:updated_time", (err, reply) ->
+    last_updated_time = new Date(reply)
+
   request url('feed'), (error, response, body) ->
     feedData = JSON.parse(body).feed.data
     for data in feedData
-      console.log JSON.stringify(data, null, 4)
+      updated_time = new Date(data.updated_time)
+      if (updated_time > last_updated_time)
+        console.log 'Time to cache a new feed entry!'
+
+  db.set "facebook:updated_time", new Date()
 
 exports.pull = (payload) ->
   if not payload.object
