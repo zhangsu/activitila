@@ -1,11 +1,17 @@
 redis = require 'redis'
 request = require 'request'
+url = require 'url'
 querystring = require 'querystring'
 credentials = require './credentials'
 
-db = redis.createClient()
+if process.env.REDISTOGO_URL
+  components = url.parse(process.env.REDISTOGO_URL)
+  db = redis.createClient(components.port, components.hostname)
+  db.auth(components.auth.split(':')[1])
+else
+  db = redis.createClient()
 
-url = (fields) ->
+apiUrl = (fields) ->
   "https://graph.facebook.com/#{credentials.basic.uid}?" +
     querystring.stringify {
       fields: 'feed'
@@ -19,7 +25,7 @@ pullFeed = ->
   db.get "facebook:updated_time", (err, reply) ->
     last_updated_time = new Date(reply)
 
-  request url('feed'), (error, response, body) ->
+  request apiUrl('feed'), (error, response, body) ->
     feedData = JSON.parse(body).feed.data
     for data in feedData
       updated_time = new Date(data.updated_time)
