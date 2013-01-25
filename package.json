@@ -6,7 +6,8 @@
   "dependencies": {
     "coffee-script": "1.x",
     "express": "3.x",
-    "request": "x"
+    "request": "x",
+    "querystring": "x"
   },
   "engines": {
     "node": "0.x",

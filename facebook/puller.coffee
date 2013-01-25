@@ -1,4 +1,20 @@
+request = require 'request'
+querystring = require 'querystring'
 credentials = require './credentials'
+
+url = (fields) ->
+  "https://graph.facebook.com/#{credentials.basic.uid}?" +
+    querystring.stringify {
+      fields: 'feed'
+      access_token: credentials.basic.accessToken
+    }
+
+pullFeed = ->
+  console.log 'Updating feed cache...'
+  request url('feed'), (error, response, body) ->
+    feedData = JSON.parse(body).feed.data
+    for data in feedData
+      console.log JSON.stringify(data, null, 4)
 
 exports.pull = (payload) ->
   if not payload.object
@@ -15,4 +31,4 @@ exports.pull = (payload) ->
 
       for field in entry.changed_fields
         if field == 'feed'
-          console.log 'time to update feed cache!'
+          pullFeed()
