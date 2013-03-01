@@ -1,15 +1,10 @@
-redis = require 'redis'
+async = require 'async'
+querystring = require 'querystring'
 request = require 'request'
 url = require 'url'
-querystring = require 'querystring'
-credentials = require './credentials'
 
-if process.env.REDISTOGO_URL
-  components = url.parse(process.env.REDISTOGO_URL)
-  db = redis.createClient(components.port, components.hostname)
-  db.auth(components.auth.split(':')[1])
-else
-  db = redis.createClient()
+credentials = require './credentials'
+cache = require '../cache'
 
 apiUrl = (fields) ->
   "https://graph.facebook.com/#{credentials.basic.uid}?" +
@@ -18,22 +13,34 @@ apiUrl = (fields) ->
       access_token: credentials.basic.accessToken
     }
 
+###
+Pull and cache feed from Facebook.
+###
 pullFeed = ->
   console.log 'Updating feed cache...'
-  last_updated_time = null
 
-  db.get "facebook:updated_time", (err, reply) ->
-    last_updated_time = new Date(reply)
+  lastUpdatedTime = null
 
-  request apiUrl('feed'), (error, response, body) ->
-    feedData = JSON.parse(body).feed.data
-    for data in feedData
-      updated_time = new Date(data.updated_time)
-      if (updated_time > last_updated_time)
-        console.log 'Time to cache a new feed entry!'
+  async.parallel [
+    (callback) ->
+      cache.db.get "facebook:updated_time", (err, reply) ->
+        lastUpdatedTime = new Date(reply)
+        callback(null)
+  ],
+  ->
+    console.log lastUpdatedTime
+    request apiUrl('feed'), (error, response, body) ->
+      feedData = JSON.parse(body).feed.data
+      for data in feedData
+        updatedTime = new Date(data.updated_time)
+        if (updatedTime > lastUpdatedTime)
+          console.log 'Time to cache a new feed entry!'
 
-  db.set "facebook:updated_time", new Date()
+    cache.db.set "facebook:updated_time", new Date()
 
+###
+Pull data from Facebook based on realtime update payload.
+###
 exports.pull = (payload) ->
   if not payload.object
     throw 400
