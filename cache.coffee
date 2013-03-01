@@ -1,4 +1,5 @@
 redis = require 'redis'
+url = require 'url'
 
 db = null
 # Setup Redis connection. REDISTOGO_URL will be present on Heroku.
