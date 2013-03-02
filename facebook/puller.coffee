@@ -22,24 +22,32 @@ pullFeed = ->
   # Last updated timestamp.
   lastUpdatedTime = null
 
-  async.parallel [
+  async.series [
     (callback) ->
       cache.getLastUpdatedTime (err, time) ->
         lastUpdatedTime = time
         callback(err)
-  ],
-  ->
-    # Call Facebook Graph API to fetch the feed data.
-    request apiUrl('feed'), (err, response, body) ->
-      return if err
+    ,
+    (callback) ->
+      # Call Facebook Graph API to fetch the feed data.
+      request apiUrl('feed'), (err, response, body) ->
+        return if err
+        json = JSON.parse(body)
+        # Skip invalid json body.
+        return if not json.feed or not json.feed.data
 
-      feedData = JSON.parse(body).feed.data
-      for data in feedData
-        updatedTime = new Date(data.updated_time).valueOf()
-        continue if updatedTime < lastUpdatedTime
+        for data in json.feed.data
+          # Skip invalid JSON data entry.
+          continue if not data.updated_time or not data.type
 
-        if data.type == 'status'
-          cache.add data.story, updatedTime
+          updatedTime = new Date(data.updated_time).valueOf()
+          continue if updatedTime < lastUpdatedTime
+
+          if data.type == 'status'
+            cache.add data.story, updatedTime if data.story
+
+      callback()
+  ]
 
 ###
 Pull data from Facebook based on realtime update payload.
