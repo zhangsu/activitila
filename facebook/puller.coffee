@@ -19,24 +19,25 @@ Pull and cache feed from Facebook.
 pullFeed = ->
   console.log 'Updating feed cache...'
 
-  lastUpdatedTime = null
+  # Last updated timestamp.
+  lastUpdatedTime = 0
 
   async.parallel [
     (callback) ->
-      cache.db.get "facebook:updated_time", (err, reply) ->
-        lastUpdatedTime = new Date(reply)
+      cache.getLastUpdatedTime (err, time) ->
+        lastUpdatedTime = time
         callback(null)
   ],
   ->
-    console.log lastUpdatedTime
+    # Call Facebook Graph API to fetch the feed data.
     request apiUrl('feed'), (error, response, body) ->
       feedData = JSON.parse(body).feed.data
       for data in feedData
-        updatedTime = new Date(data.updated_time)
-        if (updatedTime > lastUpdatedTime)
-          console.log 'Time to cache a new feed entry!'
+        updatedTime = new Date(data.updated_time).valueOf()
+        continue if updatedTime < lastUpdatedTime
 
-    cache.db.set "facebook:updated_time", new Date()
+        if data.type == 'status'
+          cache.add data.story, updatedTime
 
 ###
 Pull data from Facebook based on realtime update payload.
