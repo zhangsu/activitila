@@ -20,17 +20,19 @@ pullFeed = ->
   console.log 'Updating feed cache...'
 
   # Last updated timestamp.
-  lastUpdatedTime = 0
+  lastUpdatedTime = null
 
   async.parallel [
     (callback) ->
       cache.getLastUpdatedTime (err, time) ->
         lastUpdatedTime = time
-        callback(null)
+        callback(err)
   ],
   ->
     # Call Facebook Graph API to fetch the feed data.
-    request apiUrl('feed'), (error, response, body) ->
+    request apiUrl('feed'), (err, response, body) ->
+      return if err
+
       feedData = JSON.parse(body).feed.data
       for data in feedData
         updatedTime = new Date(data.updated_time).valueOf()
