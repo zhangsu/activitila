@@ -9,7 +9,7 @@ cache = require '../cache'
 apiUrl = (fields) ->
   "https://graph.facebook.com/#{credentials.basic.uid}?" +
     querystring.stringify {
-      fields: 'feed'
+      fields: fields
       access_token: credentials.basic.accessToken
     }
 
