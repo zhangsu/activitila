@@ -55,3 +55,9 @@ exports.add = (string, time) ->
 
   # No need to wait for the above operations as we have a 1MB buffer zone.
   db.zadd CACHE_KEY, time, string
+
+###
+Retrieve a range of items in the cache.
+###
+exports.get = (start, stop, callback) ->
+  db.zrange CACHE_KEY, start, stop, callback

@@ -1,5 +1,6 @@
 express = require 'express'
 
+cache = require './cache'
 facebook = require './facebook'
 
 app = express()
@@ -7,7 +8,13 @@ app.use(express.static(__dirname + '/public'))
 app.use(express.bodyParser())
 
 app.get '/', (request, response) ->
-  response.send('It works!')
+  cache.get 0, 24, (err, reply) ->
+    if reply.length > 0
+      buffer = ''
+      buffer += item + '<br>' for item in reply
+      response.send(buffer)
+    else
+      response.send('Nothing to see here.')
 
 app.get '/facebook/realtime', facebook.realtime.verify
 app.post '/facebook/realtime', facebook.realtime.update
