@@ -1,7 +1,7 @@
 express = require 'express'
 
-cache = require './cache'
-facebook = require './facebook'
+controllers = require './controllers'
+cache = require './logic/cache'
 
 app = express()
 app.use(express.static(__dirname + '/public'))
@@ -16,7 +16,7 @@ app.get '/', (request, response) ->
     else
       response.send('Nothing to see here.')
 
-app.get '/facebook/realtime', facebook.realtime.verify
-app.post '/facebook/realtime', facebook.realtime.update
+app.get '/facebook/realtime', controllers.facebook.realtime.verify
+app.post '/facebook/realtime', controllers.facebook.realtime.update
 
 app.listen config = process.env.PORT or 8125

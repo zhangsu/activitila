@@ -1,5 +1,6 @@
-credentials = require './credentials'
-puller = require './puller'
+facebookLogicDir = '../../logic/facebook/'
+credentials = require facebookLogicDir + 'credentials'
+puller = require facebookLogicDir + 'puller'
 
 ###
 Pull data from Facebook based on realtime update payload.
