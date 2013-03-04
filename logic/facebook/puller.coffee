@@ -29,17 +29,11 @@ exports.pullFeed = ->
         callback(err)
     ,
     (callback) ->
-      # Call Facebook Graph API to fetch the feed data.
+      # Call Facebook Graph API to fetch the feed data. Assuming all fields
+      # exists or else Facebook API is broken.
       request apiUrl('feed'), (err, response, body) ->
         return if err
-        json = JSON.parse(body)
-        # Skip invalid json body.
-        return if not json.feed or not json.feed.data
-
-        for data in json.feed.data
-          # Skip invalid JSON data entry.
-          continue if not data.updated_time or not data.type
-
+        for data in JSON.parse(body).feed.data
           updatedTime = new Date(data.updated_time).valueOf()
           continue if updatedTime < lastUpdatedTime
 
