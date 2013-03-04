@@ -1,7 +1,6 @@
 express = require 'express'
 
 controllers = require './controllers'
-cache = require './logic/cache'
 
 app = express()
 app.use(express.static(__dirname + '/public'))
