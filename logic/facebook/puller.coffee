@@ -14,6 +14,29 @@ apiUrl = (fields) ->
     }
 
 ###
+Parse a `status` type data and return the parsed story string.
+###
+parseStatus = (data) ->
+  return data.story if not data.story_tags
+
+  pivot = 0
+  result = ''
+  # Process any tags for which we are interested.
+  for offset, tags of data.story_tags
+    # Currently not handling multiple tags at the same offset.
+    continue if tags.length != 1
+
+    tag = tags[0]
+    if tag.type == 'user'
+      [offset, length] = [parseInt(tag.offset), parseInt(tag.length)]
+      result += data.story.substring(pivot, offset) +
+          "<a href='http://facebook.com/" + tag.id + "'>" + tag.name + "</a>"
+      pivot = offset + length
+
+  # Return with the rest of the original string.
+  result + data.story.substring(pivot)
+
+###
 Pull and cache feed from Facebook.
 ###
 exports.pullFeed = ->
@@ -38,7 +61,8 @@ exports.pullFeed = ->
           continue if updatedTime < lastUpdatedTime
 
           if data.type == 'status'
-            cache.add data.story, updatedTime if data.story
+            parsedStory = parseStatus(data)
+            cache.add parsedStory, updatedTime
 
       callback()
   ]
