@@ -57,7 +57,8 @@ exports.add = (string, time) ->
   db.zadd CACHE_KEY, time, string
 
 ###
-Retrieve a range of items in the cache.
+Retrieve a range of items in the cache. `start` is the index of the newest item
+to retrieve and `stop` is the index of the oldest item to retrieve.
 ###
 exports.get = (start, stop, callback) ->
-  db.zrange CACHE_KEY, start, stop, callback
+  db.zrevrange CACHE_KEY, start, stop, callback
