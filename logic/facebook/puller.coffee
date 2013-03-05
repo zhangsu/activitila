@@ -58,7 +58,7 @@ exports.pullFeed = ->
         return if err
         for data in JSON.parse(body).feed.data
           updatedTime = new Date(data.updated_time).valueOf()
-          continue if updatedTime < lastUpdatedTime
+          continue if updatedTime <= lastUpdatedTime
 
           if data.type == 'status'
             parsedStory = parseStatus(data)
