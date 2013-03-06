@@ -9,7 +9,11 @@
     "request": "x",
     "querystring": "x",
     "redis": "x",
-    "async": "x"
+    "async": "x",
+    "jade": "x",
+    "connect-assets": "x",
+    "stylus": "x",
+    "nib": "x"
   },
   "engines": {
     "node": "0.x",
