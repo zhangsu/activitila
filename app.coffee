@@ -2,9 +2,15 @@ express = require 'express'
 
 controllers = require './controllers'
 
+publicDirname = __dirname + '/public'
+
 app = express()
-app.use(express.static(__dirname + '/public'))
-app.use(express.bodyParser())
+app.use express.static(publicDirname)
+app.use express.bodyParser()
+app.use require('connect-assets')(buildDir: publicDirname)
+
+css.root = '/stylesheets'
+js.root = '/javascripts'
 
 app.get '/', controllers.root
 
