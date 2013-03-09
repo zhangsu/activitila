@@ -3,5 +3,15 @@ cache = require '../logic/cache'
 exports.facebook = require './facebook'
 
 exports.root = (request, response) ->
-  cache.get 0, 24, (err, reply) ->
+  MAX_LENGTH = 25
+  offset = parseInt(request.query['offset'])
+  length = parseInt(request.query['length'])
+
+  offset = 0 if isNaN(offset) or offset < 0
+  if isNaN(length) or length > MAX_LENGTH
+    length = MAX_LENGTH
+  else if length < 1
+    length = 1
+
+  cache.get offset, offset + length - 1, (err, reply) ->
     response.render 'index.jade', entries: reply
