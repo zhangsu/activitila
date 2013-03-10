@@ -2,7 +2,7 @@ cache = require '../logic/cache'
 
 exports.facebook = require './facebook'
 
-exports.root = (request, response) ->
+exports.index = (request, response) ->
   MAX_LENGTH = 25
   offset = parseInt(request.query['offset'])
   length = parseInt(request.query['length'])

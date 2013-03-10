@@ -12,7 +12,7 @@ app.use require('connect-assets')(buildDir: publicDirname)
 css.root = '/stylesheets'
 js.root = '/javascripts'
 
-app.get '/', controllers.root
+app.get '/', controllers.index
 
 app.get '/facebook/realtime', controllers.facebook.realtime.verify
 app.post '/facebook/realtime', controllers.facebook.realtime.update
