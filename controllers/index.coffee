@@ -14,4 +14,9 @@ exports.root = (request, response) ->
     length = 1
 
   cache.get offset, offset + length - 1, (err, reply) ->
-    response.render 'index.jade', entries: reply
+    response.format
+      'json': ->
+        response.json reply
+      ,
+      'html': ->
+        response.render 'index.jade', entries: reply
