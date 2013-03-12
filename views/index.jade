@@ -8,7 +8,7 @@ html
     #container
       if entries.length > 0
         for entry in entries
-          div.box !{entry}
+          div.box !{entry[0]}
       else
         div Nothing to see here.
     script(src='//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js')

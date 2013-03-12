@@ -61,4 +61,10 @@ Retrieve a range of items in the cache. `start` is the index of the newest item
 to retrieve and `stop` is the index of the oldest item to retrieve.
 ###
 exports.get = (start, stop, callback) ->
-  db.zrevrange CACHE_KEY, start, stop, callback
+  db.zrevrange CACHE_KEY, start, stop, 'WITHSCORES', (err, reply) ->
+    associationArray = []
+    if not err
+      for i in [0...reply.length] by 2
+        associationArray.push [reply[i], reply[i + 1]]
+
+    callback(err, associationArray)
