@@ -27,7 +27,7 @@ parseStatus = (data) ->
     continue if tags.length != 1
 
     tag = tags[0]
-    if tag.type == 'user'
+    if tag.type.match /^(user|page)$/
       [offset, length] = [parseInt(tag.offset), parseInt(tag.length)]
       result += data.story.substring(pivot, offset) +
           "<a href='http://facebook.com/" + tag.id + "'>" + tag.name + "</a>"
