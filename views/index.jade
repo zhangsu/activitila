@@ -1,16 +1,16 @@
 doctype html
-html
-  head
-    meta(charset='utf-8')
-    title Su Zhang's Activities
-    != css('index')
-    script(type='text/javascript', src='analytics.js')
-  body
-    #container
-      if entries.length > 0
-        for entry in entries
-          div.box !{entry[0]}
-      else
-        div Nothing to see here.
-    script(src='//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js')
-    != js('index')
+
+meta(charset='utf-8')
+title Su Zhang's Activities
+!= css('index')
+script(type='text/javascript', src='analytics.js')
+
+#container
+  if entries.length > 0
+    for entry in entries
+      div.box !{entry[0]}
+  else
+    div Nothing to see here.
+
+script(src='//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js')
+!= js('index')
