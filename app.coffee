@@ -6,7 +6,9 @@ publicDirname = __dirname + '/public'
 
 app = express()
 app.use express.static(publicDirname)
-app.use express.bodyParser()
+app.use express.json()
+app.use express.urlencoded()
+app.use require('cookie-parser')()
 app.use require('connect-assets')(buildDir: publicDirname)
 
 css.root = '/stylesheets'
